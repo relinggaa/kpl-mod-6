@@ -1,56 +1,83 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace tpmodul6_103022300107
+public class SayaTubeVideo
 {
-    using System;
-
-    public class SayaTubeVideo
-    {
    
-        private int id;
-        private string title;
-        private int playCount;
+    private int id;
+    private string judulVideo;
+    private int playCount;
 
-  
-        public SayaTubeVideo(string title)
+
+    public SayaTubeVideo(string judulVideo)
+    {
+        if (judulVideo == null)
         {
-            Random rand = new Random();
-            this.id = rand.Next(10000, 99999); 
-            this.title = title;
-            this.playCount = 0; 
+            throw new ArgumentNullException("judulVideo", "Judul video tidak boleh null.");
+        }
+        if (judulVideo.Length > 100)
+        {
+            throw new ArgumentException("Judul video tidak boleh lebih dari 100 karakter.");
         }
 
+        Random rand = new Random();
+        this.id = rand.Next(10000, 99999); 
+        this.judulVideo = judulVideo;
+        this.playCount = 0; 
+    }
 
-        public void IncreasePlayCount(int count)
+   
+    public void IncreasePlayCount(int count)
+    {
+        if (count > 10000000)
         {
-            this.playCount += count;
+            throw new ArgumentOutOfRangeException("count", "Penambahan playCount maksimal 10.000.000 per panggilan.");
         }
 
-     
-        public void PrintVideoDetails()
+        try
         {
-            Console.WriteLine($"ID: {this.id}");
-            Console.WriteLine($"Title: {this.title}");
-            Console.WriteLine($"PlayCount: {this.playCount}");
+          
+            checked
+            {
+                this.playCount += count;
+            }
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("Error: Terjadi overflow pada playCount.");
         }
     }
 
-    public class Program
+
+    public void PrintVideoDetails()
     {
-        public static void Main(string[] args)
+        Console.WriteLine($"ID: {this.id}");
+        Console.WriteLine($"judulVideo: {this.judulVideo}");
+        Console.WriteLine($"PlayCount: {this.playCount}");
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        try
         {
-     
             SayaTubeVideo video = new SayaTubeVideo("Tutorial Design By Contract - [Relingga Aditya]");
-
-         
-            video.IncreasePlayCount(5); 
-
-         
+            video.IncreasePlayCount(5000000);
             video.PrintVideoDetails();
         }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        catch (ArgumentNullException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+
     }
 }
